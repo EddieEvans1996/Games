@@ -8,6 +8,62 @@ import pygame
 
 
 def main():
+    screen_width = 480
+    screen_height = 480
+    grid_size = 20
+    grid_width = screen_width/grid_size
+    grid_height = screen_height/grid_size
+    playing = True
+
+    white = (255,255,255)
+    black = (0,0,0)
+    green = (0,153,0)
+    red = (255,0,0)
+
+    up = (0,-1)
+    down = (0,1)
+    right = (1,0)
+    left = (-1,0)
+
+    startingx = screen_width/2
+    startingy = screen_height/2
+    snake_colour = green
+
+    
+
+    game_screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("Snake")
+    clock = pygame.time.Clock()
+
+    class Snake:
+        def __init__(self):
+            self.head_x = startingx
+            self.head_y = startingy
+            self.colour = snake_colour
+            self.position = [(startingx, startingy)]
+            self.length = 1
+            self.dir = right
+            self.prevdir = right
+
+        
+        def update_location(self):
+            l = self.legnth
+            if l > 1:
+                for i in range(1,l):
+                    self.position[l - i] = self.position[l - i - 1]
+                self.position[0] = ((self.position[0][0] + self.dir[0]*grid_width) % screen_width, (self.position[0][1]  + self.dir[1]*grid_height) % screen_height)
+            else:
+                self.position[0] = ((self.position[0][0] + self.dir[0]*grid_width) % screen_width, (self.position[0][1]  + self.dir[1]*grid_height) % screen_height)
+            self.prevdir = self.dir
+
+        def update_dir(self, new_dir):
+            if self.length > 1:
+                if new_dir != -self.prevdir:
+                    self.dir = new_dir
+            else:
+                self.dir = new_dir    
+            
+
 
     class Ball:
         def __init__(self, x, y):
@@ -23,19 +79,7 @@ def main():
             self.x = self.x + self.speed[0]
             self.y = self.y + self.speed[1]
 
-    screen_width = 480
-    screen_height = 480
-    grid_size = 20
-    grid_width = screen_width/grid_size
-    grid_height = screen_height/grid_size
-    playing = True
-
-
-    white = (255,255,255)
-    black = (0,0,0)
-    game_screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("A ball.")
-    clock = pygame.time.Clock()
+    
 
     ball = Ball(20,20)
 
