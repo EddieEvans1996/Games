@@ -1,4 +1,6 @@
+from typing import TYPE_CHECKING
 import pygame
+import random
 #Things we need
 #initialise pygame
 #make the pygame.display and set_mode (size of the screen)
@@ -28,12 +30,21 @@ def main():
     startingx = screen_width/2
     startingy = screen_height/2
     snake_colour = green
+    fruit_colour = red
 
     
 
     game_screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Snake")
     clock = pygame.time.Clock()
+
+    class Fruit:
+        def __init__(self, x, y):
+            self.position = (x,y)
+            self.colour = fruit_colour
+
+        def reposition(self, x, y):
+            self.position = (x,y)
 
     class Snake:
         def __init__(self):
@@ -44,10 +55,12 @@ def main():
             self.length = 1
             self.dir = right
             self.prevdir = right
+            self.intersect = False
+            self.eating = False
+            self.grow = False
 
-        
         def update_location(self):
-            l = self.legnth
+            l = self.length
             if l > 1:
                 for i in range(1,l):
                     self.position[l - i] = self.position[l - i - 1]
@@ -57,36 +70,41 @@ def main():
             self.prevdir = self.dir
 
         def update_dir(self, new_dir):
+            opposite_new_dir = (-new_dir[0], -new_dir[1])
             if self.length > 1:
-                if new_dir != -self.prevdir:
+                
+                if opposite_new_dir != self.prevdir:
                     self.dir = new_dir
             else:
-                self.dir = new_dir    
+                self.dir = new_dir
             
+        def check_intersect(self):
+            if self.length > 2:
+                for i in range(1,self.length):
+                    if self.position[0] == self.position[i]:
+                        self.intersect = True
 
+        def check_eaten_fruit(self, fruitx, fruity):
+            if ((self.position[0][0] + self.dir[0]*grid_width) % screen_width, (self.position[0][1]  + self.dir[1]*grid_height) % screen_height) == (fruitx, fruity):
+                self.eating = True
 
-    class Ball:
-        def __init__(self, x, y):
-            self.x = x
-            self.y = y
-            self.speed = (0,0)
-            self.colour = black
+        def growing_update_location(self):
+            self.length += 1
+            self.position = self.position + [self.position[(self.length - 2)]]
+            self.position[1:(self.length - 1)] = self.position[0:(self.length - 2)]
+            self.position[0] = ((self.position[0][0] + self.dir[0]*grid_width) % screen_width, (self.position[0][1]  + self.dir[1]*grid_height) % screen_height)
+            self.prevdir = self.dir
 
-        def change_speed(self, speed):
-            self.speed = speed
-
-        def change_location(self):
-            self.x = self.x + self.speed[0]
-            self.y = self.y + self.speed[1]
-
-    
-
-    ball = Ball(20,20)
+    snake = Snake()
+    fruit = Fruit(random.randint(0, grid_size - 1)*grid_width, random.randint(0, grid_size - 1)*grid_height)
 
     def draw_gamescreen(game_screen):
-        pygame.fill(game_screen, white)
-        r = pygame.Rect(ball.x, ball.y, 20, 20)
-        game_screen.draw.rect(r, ball.colour)
+        game_screen.fill(black)
+        r = pygame.Rect(fruit.position[0], fruit.position[1], grid_width, grid_height)
+        pygame.draw.rect(game_screen, fruit.colour, r)
+        for i in range(0, snake.length):
+            r = pygame.Rect(snake.position[i][0], snake.position[i][1], grid_width, grid_height)
+            pygame.draw.rect(game_screen, snake.colour, r)
 
 
     while playing:
@@ -98,24 +116,32 @@ def main():
             if e.type == pygame.KEYDOWN:
                 match e.key:
                     case pygame.K_LEFT:
-                        ball.change_speed((-20, 0))
+                        snake.update_dir(left)
                     case pygame.K_RIGHT:
-                        ball.change_speed((20, 0))
+                        snake.update_dir(right)
                     case pygame.K_UP:
-                        ball.change_speed((0, -20))
+                        snake.update_dir(up)
                     case pygame.K_DOWN:
-                        ball.change_speed((0, 20))
-
-            if e.type == pygame.KEYUP:
-                if e.key == pygame.K_LEFT or e.key == pygame.K_RIGHT or e.key == pygame.K_UP or e.key == pygame.K_DOWN:
-                    ball.change_speed((0,0))
+                        snake.update_dir(down)
         
-        ball.change_location()
-        game_screen.fill(white)
-        r = pygame.Rect(ball.x, ball.y, 20, 20)
-        pygame.draw.rect(game_screen, ball.colour, r)
+        snake.check_eaten_fruit(fruit.position[0], fruit.position[1])
+        if snake.eating == True:
+            fruit.reposition(random.randint(0, grid_size - 1)*grid_width, random.randint(0, grid_size - 1)*grid_height)
+            snake.update_location()
+            snake.eating = False
+            snake.grow = True
+        elif snake.grow == True:
+            snake.growing_update_location()
+            snake.grow = False
+        else:
+            snake.update_location()
+
+        draw_gamescreen(game_screen)
         pygame.display.update()
-        clock.tick(60)
+        snake.check_intersect()
+        if snake.intersect == True:
+            snake = Snake()
+        clock.tick(6)
 
 
 if __name__ == "__main__":
