@@ -141,7 +141,7 @@ def main():
         snake.check_intersect()
         if snake.intersect == True:
             snake = Snake()
-        clock.tick(6)
+        clock.tick(10)
 
 
 if __name__ == "__main__":
