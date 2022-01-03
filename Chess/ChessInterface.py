@@ -2,6 +2,7 @@
 #Responsible for GUI and entertaining the user!
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 import pygame
+import ChessEngine
 
 def main():
     screen_width = 720
