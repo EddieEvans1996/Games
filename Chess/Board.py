@@ -57,7 +57,11 @@ class Board():
         
 
     def valid_move(self,start,end):
-        if self.board[start[1]][start[0]] == None:
+        #Ensures that a piece has been chosen.
+        #Ensures that a null move (i.e. moving a piece to where it currently is) is not allowed.
+        if self.board[start[1]][start[0]] == None or start == end:
+            return False
+        elif self.white_to_move != self.board[start[1]][start[0]].is_white():
             return False
         elif self.board[start[1]][start[0]].is_valid_move(self.board, start, end) == False:
             return False
@@ -66,5 +70,6 @@ class Board():
 
 
     def move(self, start, end):
+        self.board[start[1]][start[0]].has_moved = True
         self.board[end[1]][end[0]] = self.board[start[1]][start[0]]
         self.board[start[1]][start[0]] = None

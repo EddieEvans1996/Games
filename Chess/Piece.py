@@ -1,6 +1,24 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 #Responsible for pieces.
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+import numpy as np
+
+def valid_diagonal_move(board, start, end):
+    #Firstly see if it goes in the diagonal direction
+    if abs(start[0] - end[0]) == abs(start[1] - end[1]):
+        if abs(start[0] - end[0]) > 1:
+            for i in range(1, abs(start[0] - end[0])):
+                if board[start[1] + (np.sign(end[1] - start[1])*i)][start[0] + (np.sign(end[0] - start[0])*i)] != None:
+                    return False
+        if board[end[1]][end[0]] != None:
+            if board[end[1]][end[0]].is_white() == board[start[1]][start[0]].is_white():
+                return False
+            else:
+                return True
+        else:
+            return True
+    else:
+        return False
 
 class Piece():
     def __init__(self, colour):
@@ -22,66 +40,113 @@ class Piece():
             return '\033[94m' + self.name + '\033[0m'
             # return self.name.lower()
 
+# We can write functions to check if start and end are on the same row/col/diagonal seperately, and then use them on each of the functions.
+#Checking if there is a possible knight move is the other option. This will be put next to the functions mentioned above since this
+#will make it clear where all of the code should belong.
 class King(Piece):
-    def __init__(self, colour):
+    def __init__(self, colour, has_moved = False):
         self.can_castle = True
         super().__init__(colour)
         self.value = 999
         self.name = "K"
+        self.has_moved = has_moved
 
     def can_castle(self):
         return self.can_castle
     
     def is_valid_move(self, board, start, end):
-        return True
+        if start == end:
+            return False #Preventing moving to own square
+
+        #Check it is moving in the squares around the king, and only taking enemy pieces, and not being allowed on white pieces
+        if (start[0] + 1 >= end[0]) & (start[0] - 1 <= end[0]) & (start[1] + 1 >= end[1]) & (start[1] - 1 <= end[1]):
+            if board[end[1]][end[0]] != None:
+                #Only take opposite colour.
+                if board[end[1]][end[0]].is_white() != self.is_white():
+                    return True
+                else:
+                    return False
+            return True
+        else:
+            return False
+        
 
 class Queen(Piece):
-    def __init__(self, colour):
+    def __init__(self, colour, has_moved = False):
         super().__init__(colour)
         self.value = 9
         self.name = "Q"
 
     def is_valid_move(self, board, start, end):
+        if start == end:
+            return False #Preventing moving to own square
         return True
 
 class Rook(Piece):
-    def __init__(self, colour):
+    def __init__(self, colour, has_moved = False):
         self.value = 5
         super().__init__(colour)
         self.name = "R"
+        self.has_moved = has_moved
 
     def is_valid_move(self, board, start, end):
+        if start == end:
+            return False #Preventing moving to own square
         return True
 
 class Bishop(Piece):
-    def __init__(self, colour):
+    def __init__(self, colour, has_moved = False):
         self.value = 3
         super().__init__(colour)
         self.name = "B"
 
     def is_valid_move(self, board, start, end):
+        if start == end:
+            return False #Preventing moving to own square
         return True
 
 class Knight(Piece):
-    def __init__(self, colour):
+    def __init__(self, colour, has_moved = False):
         self.value = 3
         super().__init__(colour)
         self.name = "N"
 
     def is_valid_move(self, board, start, end):
+        if start == end:
+            return False #Preventing moving to own square
         return True
 
 class Pawn(Piece):
-    def __init__(self, colour):
+    #TODO: #1 Implement en passent.
+    def __init__(self, colour, has_moved = False):
         self.value = 1
         super().__init__(colour)
         self.name = "P"
+        self.has_moved = has_moved
 
     def is_valid_move(self, board, start, end):
-        return True
+        if start == end:
+            return False #Preventing moving to own square
+        if self.is_white():
+            plus = - 1
+        else:
+            plus = 1
+        #Can the pawn move forward one square.
+        if (end[0] == start[0]) & (end[1] == start[1] + plus) & (board[end[1]][end[0]] == None):
+            return True
+        #Can the pawn move forward two squares.
+        elif (end[0] == start[0]) & (end[1] == start[1] + 2*plus) & (board[end[1]][end[0]] == None) & (board[end[1] - plus][end[0]] == None) & (self.has_moved == False):
+            return True
+        elif (abs(end[0] - start[0]) == 1) & (end[1] == start[1] + plus) & (board[end[1]][end[0]] != None):
+            if board[end[1]][end[0]].is_white() != self.is_white():
+                return True
+            else:
+                return False
+        else:
+            return False
 
 class GhostPawn(Piece):
-    def __init__(self, colour):
+    def __init__(self, colour, has_moved = False):
         self.value = 0
         super().__init__(colour)
         self.name = " "

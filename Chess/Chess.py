@@ -30,7 +30,15 @@ def main():
     chess.board.print_board()
     while (True):
         start = input("Start: ")
+        ###TEMPORARY SOLUTION TO QUITTING THE GAME
+        if start == "quit":
+            quit()
+
         end = input("End: ")
+
+        ###TEMPORARY SOLUTION TO QUITTING THE GAME
+        if end == "quit":
+            quit()
 
         start = translate(start)
         end = translate(end)
@@ -41,6 +49,7 @@ def main():
         
         if chess.board.valid_move(start,end) == True:
             chess.board.move(start,end)
+            chess.board.white_to_move = not chess.board.white_to_move
         else:
             continue
 
