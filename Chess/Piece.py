@@ -35,6 +35,8 @@ def valid_horver_move(board, start, end):
             return True
         else:
             return False #Else there is a friendly piece which we cannot move to
+    else:
+        return False
 
 def valid_knight_move(board, start, end):
     #Easy since knight can jump over stuff. Check it has done an L shape, then check if the square is free/capturable
@@ -80,10 +82,12 @@ class King(Piece):
         self.has_moved = has_moved
 
     #TODO: #2 Implement castling.
+    ##Note that moving through check is just the same as checking if the king is in check if you move one square, or checking if the
+    ##king is in check if you actually do the castrel. Makes the coding easier since it just breaks it down into these two cases.
     def can_castle(self):
         return self.can_castle
     
-    def is_valid_move(self, board, start, end):
+    def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
             return False #Preventing moving to own square
 
@@ -106,7 +110,7 @@ class Queen(Piece):
         self.value = 9
         self.name = "Q"
 
-    def is_valid_move(self, board, start, end):
+    def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
             return False #Preventing moving to own square
 
@@ -119,7 +123,7 @@ class Rook(Piece):
         self.name = "R"
         self.has_moved = has_moved
 
-    def is_valid_move(self, board, start, end):
+    def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
             return False #Preventing moving to own square
 
@@ -131,7 +135,7 @@ class Bishop(Piece):
         super().__init__(colour)
         self.name = "B"
 
-    def is_valid_move(self, board, start, end):
+    def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
             return False #Preventing moving to own square
 
@@ -143,7 +147,7 @@ class Knight(Piece):
         super().__init__(colour)
         self.name = "N"
 
-    def is_valid_move(self, board, start, end):
+    def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
             return False #Preventing moving to own square
 
@@ -151,13 +155,14 @@ class Knight(Piece):
 
 class Pawn(Piece):
     #TODO: #1 Implement en passent.
+    #TODO: #3 Implement promotion.
     def __init__(self, colour, has_moved = False):
         self.value = 1
         super().__init__(colour)
         self.name = "P"
         self.has_moved = has_moved
 
-    def is_valid_move(self, board, start, end):
+    def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
             return False #Preventing moving to own square
         if self.is_white():
@@ -175,6 +180,9 @@ class Pawn(Piece):
                 return True
             else:
                 return False
+        #The en passent clause
+        elif (abs(end[0] - start[0]) == 1) & (end[1] == start[1] + plus) & (board[end[1]][end[0]] == None) & (ghost_board[end[1]][end[0]] != None):
+            return True
         else:
             return False
 

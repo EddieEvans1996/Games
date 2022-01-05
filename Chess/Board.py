@@ -8,6 +8,7 @@ class Board():
     def __init__(self):
         self.white_to_move = True
         self.board = [[None for i in range(0,8)] for j in range(0,8)]
+        self.ghost_board = [[None for i in range(0,8)] for j in range(0,8)]
 
         #Setting up the white pieces
         self.board[7][0] = Piece.Rook('w')
@@ -63,13 +64,23 @@ class Board():
             return False
         elif self.white_to_move != self.board[start[1]][start[0]].is_white():
             return False
-        elif self.board[start[1]][start[0]].is_valid_move(self.board, start, end) == False:
-            return False
         else:
-            return True
+            return self.board[start[1]][start[0]].is_valid_move(self.board, self.ghost_board, start, end)
 
 
     def move(self, start, end):
+        #Updating ghost board for en passent reasons.
+        self.ghost_board = [[None for i in range(0,8)] for j in range(0,8)]
+        if (self.board[start[1]][start[0]].name == "P") & (abs(start[1] - end[1]) == 2):
+            self.ghost_board[int((start[1] + end[1])/2)][start[0]] = Piece.GhostPawn(self.board[start[1]][start[0]].colour)
+
+        #Some extra logic to remove the enemy pawn if we are doing en passent.
+        if (self.board[start[1]][start[0]].name == "P") & (start[0] != end[0]) & (self.board[end[1]][end[0]] == None):
+            self.board[end[1] + 1][end[0]] == None
+            self.board[end[1] - 1][end[0]] == None #Fine to set both to none, since if ghost pawn is present, then opposite pawn has only just
+            #moved, and thus both the squares above and below where were are moving to are where the pawn was and where the pawn is... i.e. we 
+            #want to remove where the pawn is, and where the pawn was is empty anyway.
+
         self.board[start[1]][start[0]].has_moved = True
         self.board[end[1]][end[0]] = self.board[start[1]][start[0]]
         self.board[start[1]][start[0]] = None
