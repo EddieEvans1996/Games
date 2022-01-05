@@ -20,6 +20,34 @@ def valid_diagonal_move(board, start, end):
     else:
         return False
 
+def valid_horver_move(board, start, end):
+    #Firstly see if it does move in a horizontal or vertical way
+    if (start[0] == end[0]) | (start[1] == end[1]):
+        #Checking if there are any pieces in the way
+        if max(abs(start[0] - end[0]), start[1] - end[1]) > 1:
+            for i in range(1, max(abs(start[0] - end[0]), abs(start[1] - end[1]))):
+                if board[start[1] + np.sign(end[1] - start[1])*i][start[0] + np.sign(end[0] - start[0])*i] != None:
+                    return False
+        #Checking if there is a friendly piece on the end square
+        if board[end[1]][end[0]] == None: #End square is free
+            return True
+        elif board[end[1]][end[0]].is_white() != board[start[1]][start[0]].is_white(): #Can capture enemy piece
+            return True
+        else:
+            return False #Else there is a friendly piece which we cannot move to
+
+def valid_knight_move(board, start, end):
+    #Easy since knight can jump over stuff. Check it has done an L shape, then check if the square is free/capturable
+    if ((abs(start[0] - end[0]) == 2) & (abs(start[1] - end[1]) == 1)) | ((abs(start[0] - end[0]) == 1) & (abs(start[1] - end[1]) == 2)):
+        if board[end[1]][end[0]] == None:
+            return True
+        elif board[end[1]][end[0]].is_white() != board[start[1]][start[0]].is_white():
+            return True
+        else:
+            return False
+    else:
+        return False
+
 class Piece():
     def __init__(self, colour):
         self.colour = colour
@@ -51,6 +79,7 @@ class King(Piece):
         self.name = "K"
         self.has_moved = has_moved
 
+    #TODO: #2 Implement castling.
     def can_castle(self):
         return self.can_castle
     
@@ -80,7 +109,8 @@ class Queen(Piece):
     def is_valid_move(self, board, start, end):
         if start == end:
             return False #Preventing moving to own square
-        return True
+
+        return (valid_diagonal_move(board, start, end) | valid_horver_move(board, start, end))
 
 class Rook(Piece):
     def __init__(self, colour, has_moved = False):
@@ -92,7 +122,8 @@ class Rook(Piece):
     def is_valid_move(self, board, start, end):
         if start == end:
             return False #Preventing moving to own square
-        return True
+
+        return valid_horver_move(board, start, end)
 
 class Bishop(Piece):
     def __init__(self, colour, has_moved = False):
@@ -103,7 +134,8 @@ class Bishop(Piece):
     def is_valid_move(self, board, start, end):
         if start == end:
             return False #Preventing moving to own square
-        return True
+
+        return valid_diagonal_move(board, start, end)
 
 class Knight(Piece):
     def __init__(self, colour, has_moved = False):
@@ -114,7 +146,8 @@ class Knight(Piece):
     def is_valid_move(self, board, start, end):
         if start == end:
             return False #Preventing moving to own square
-        return True
+
+        return valid_knight_move(board, start, end)
 
 class Pawn(Piece):
     #TODO: #1 Implement en passent.
