@@ -76,8 +76,8 @@ class Board():
 
         #Some extra logic to remove the enemy pawn if we are doing en passent.
         if (self.board[start[1]][start[0]].name == "P") & (start[0] != end[0]) & (self.board[end[1]][end[0]] == None):
-            self.board[end[1] + 1][end[0]] == None
-            self.board[end[1] - 1][end[0]] == None #Fine to set both to none, since if ghost pawn is present, then opposite pawn has only just
+            self.board[end[1] + 1][end[0]] = None
+            self.board[end[1] - 1][end[0]] = None #Fine to set both to none, since if ghost pawn is present, then opposite pawn has only just
             #moved, and thus both the squares above and below where were are moving to are where the pawn was and where the pawn is... i.e. we 
             #want to remove where the pawn is, and where the pawn was is empty anyway.
 
