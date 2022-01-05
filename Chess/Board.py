@@ -67,6 +67,8 @@ class Board():
         else:
             return self.board[start[1]][start[0]].is_valid_move(self.board, self.ghost_board, start, end)
 
+    def check_for_check(self, temp_board):
+        print("Hello.")
 
     def move(self, start, end):
         #Updating ghost board for en passent reasons.

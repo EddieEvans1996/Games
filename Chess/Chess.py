@@ -36,7 +36,7 @@ def main():
 
         end = input("End: ")
 
-        ###TEMPORARY SOLUTION TO QUITTeING THE GAME
+        ###TEMPORARY SOLUTION TO QUITTING THE GAME
         if end == "quit":
             quit()
 
