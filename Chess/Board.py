@@ -71,18 +71,41 @@ class Board():
         print("Hello.")
 
     def move(self, start, end):
-        #Updating ghost board for en passent reasons.
-        self.ghost_board = [[None for i in range(0,8)] for j in range(0,8)]
-        if (self.board[start[1]][start[0]].name == "P") & (abs(start[1] - end[1]) == 2):
-            self.ghost_board[int((start[1] + end[1])/2)][start[0]] = Piece.GhostPawn(self.board[start[1]][start[0]].colour)
+        def en_passent_logic(start, end):
+            #Updating ghost board for en passent reasons.
+            self.ghost_board = [[None for i in range(0,8)] for j in range(0,8)]
+            if (self.board[start[1]][start[0]].name == "P") & (abs(start[1] - end[1]) == 2):
+                self.ghost_board[int((start[1] + end[1])/2)][start[0]] = Piece.GhostPawn(self.board[start[1]][start[0]].colour)
 
-        #Some extra logic to remove the enemy pawn if we are doing en passent.
-        if (self.board[start[1]][start[0]].name == "P") & (start[0] != end[0]) & (self.board[end[1]][end[0]] == None):
-            self.board[end[1] + 1][end[0]] = None
-            self.board[end[1] - 1][end[0]] = None #Fine to set both to none, since if ghost pawn is present, then opposite pawn has only just
-            #moved, and thus both the squares above and below where were are moving to are where the pawn was and where the pawn is... i.e. we 
-            #want to remove where the pawn is, and where the pawn was is empty anyway.
+            #Some extra logic to remove the enemy pawn if we are doing en passent.
+            if (self.board[start[1]][start[0]].name == "P") & (start[0] != end[0]) & (self.board[end[1]][end[0]] == None):
+                self.board[end[1] + 1][end[0]] = None
+                self.board[end[1] - 1][end[0]] = None #Fine to set both to none, since if ghost pawn is present, then opposite pawn has only just
+                #moved, and thus both the squares above and below where were are moving to are where the pawn was and where the pawn is... i.e. we 
+                #want to remove where the pawn is, and where the pawn was is empty anyway.
 
+        def check_pawn_promotion(start, end):
+            #PAWN PROMOTION Logic
+            if (self.board[start[1]][start[0]].name == "P") & ((end[1] == 7) | (end[1] == 0)):
+                promoted = False
+                while (not promoted):
+                    promote_to = input("What would you like to promote to? (Enter 'Q' for Queen, etc.) ")
+                    match promote_to:
+                        case "Q":
+                            self.board[end[1]][end[0]] = Piece.Queen(self.board[start[1]][start[0]].colour, True)
+                            promoted = True
+                        case "R":
+                            self.board[end[1]][end[0]] = Piece.Rook(self.board[start[1]][start[0]].colour, True)
+                            promoted = True
+                        case "B":
+                            self.board[end[1]][end[0]] = Piece.Bishop(self.board[start[1]][start[0]].colour, True)
+                            promoted = True
+                        case "N":
+                            self.board[end[1]][end[0]] = Piece.Knight(self.board[start[1]][start[0]].colour, True)
+                            promoted = True
+
+        en_passent_logic(start, end)
         self.board[start[1]][start[0]].has_moved = True
         self.board[end[1]][end[0]] = self.board[start[1]][start[0]]
+        check_pawn_promotion(start, end)
         self.board[start[1]][start[0]] = None
