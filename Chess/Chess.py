@@ -47,9 +47,10 @@ def main():
             print("Not a valid start or end entry.")
             continue
         
-        if chess.board.valid_move(start,end) == True:
-            chess.board.move(start,end)
-            chess.board.white_to_move = not chess.board.white_to_move
+        if (chess.board.valid_move(chess.board.board, start, end) == True):
+            if (chess.board.check_self_discovery(start, end) == False):
+                chess.board.move(start, end)
+                chess.board.white_to_move = not chess.board.white_to_move
         else:
             continue
 

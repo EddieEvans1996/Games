@@ -24,7 +24,7 @@ def valid_horver_move(board, start, end):
     #Firstly see if it does move in a horizontal or vertical way
     if (start[0] == end[0]) | (start[1] == end[1]):
         #Checking if there are any pieces in the way
-        if max(abs(start[0] - end[0]), start[1] - end[1]) > 1:
+        if max(abs(start[0] - end[0]), abs(start[1] - end[1])) > 1:
             for i in range(1, max(abs(start[0] - end[0]), abs(start[1] - end[1]))):
                 if board[start[1] + np.sign(end[1] - start[1])*i][start[0] + np.sign(end[0] - start[0])*i] != None:
                     return False
