@@ -38,6 +38,7 @@ def square_can_be_attacked_by_colour(board, colour, square):
             except:
                 j += 1
                 continue
+        i += 1
     return False      
 
 
