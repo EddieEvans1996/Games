@@ -148,6 +148,9 @@ class King(Piece):
         if start == end:
             return False #Preventing moving to own square
 
+        if board[end[1]][end[0]] == None:
+            if square_can_be_attacked_by_colour(board, not self.is_white(), end):
+                return False
         #Check if trying to castle first. Special case!
         if (self.has_moved == False) & (end[1] == start[1]) & (abs(start[0] - end[0]) == 2):
             return self.can_castle(board, start, end)
