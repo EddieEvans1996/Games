@@ -75,7 +75,6 @@ class Piece():
 #will make it clear where all of the code should belong.
 class King(Piece):
     def __init__(self, colour, has_moved = False):
-        self.can_castle = True
         super().__init__(colour)
         self.value = 999
         self.name = "K"
@@ -84,8 +83,26 @@ class King(Piece):
     #TODO: #2 Implement castling.
     ##Note that moving through check is just the same as checking if the king is in check if you move one square, or checking if the
     ##king is in check if you actually do the castrel. Makes the coding easier since it just breaks it down into these two cases.
-    def can_castle(self):
-        return self.can_castle
+    def can_castle(self, board, start, end):
+        if self.has_moved == False:
+            match end[0]:
+                case 2:
+                    try:
+                        if (board[start[1]][0].has_moved == False) & (board[start[1]][1] == None) & (board[start[1]][2] == None) & (board[start[1]][3] == None):
+                            #Find out if the king is moving through check. No need to check the final square since this is 
+                            #dealt with by the temp_board
+                            print("Hello")
+                            return True
+                    except:
+                        return False
+                case 6:
+                    try:
+                        if (board[start[1]][7].has_moved == False) & (board[start[1]][6] == None) & (board[start[1]][5] == None):
+                            print("Hello")
+                            return True
+                    except:
+                        return False
+
     
     def is_valid_move(self, board, ghost_board, start, end):
         if start == end:

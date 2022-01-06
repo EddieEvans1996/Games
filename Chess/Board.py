@@ -78,9 +78,7 @@ class Board():
         elif self.white_to_move == self.temp_board[start[1]][start[0]].is_white():
             return False
         else:
-            return self.temp_board[start[1]][start[0]].is_valid_move(self.temp_board, self.ghost_board, start, end) 
-            #Currently just finds if it is a valid move, and then performs the move. It should perform the move on the temp board, check
-            #if they have not discovered themselves, and then only then can they determine if the move is valid or not.
+            return self.temp_board[start[1]][start[0]].is_valid_move(self.temp_board, self.ghost_board, start, end)
 
     def move(self, start, end):
         def en_passent_logic(start, end):
@@ -116,11 +114,15 @@ class Board():
                             self.board[end[1]][end[0]] = Piece.Knight(self.board[start[1]][start[0]].colour, True)
                             promoted = True
 
-        en_passent_logic(start, end)
-        self.board[start[1]][start[0]].has_moved = True
-        self.board[end[1]][end[0]] = self.board[start[1]][start[0]]
-        check_pawn_promotion(start, end)
-        self.board[start[1]][start[0]] = None
+        if self.board[start[1]][end[0]].name == "K":
+            print("Hello.")
+            #Enter the logic required here if it turns out the player is castling. Moving lots of stuff at once here.
+        else:
+            en_passent_logic(start, end)
+            self.board[start[1]][start[0]].has_moved = True
+            self.board[end[1]][end[0]] = self.board[start[1]][start[0]]
+            check_pawn_promotion(start, end)
+            self.board[start[1]][start[0]] = None
 
     def temp_move(self, start, end):
         def en_passent_logic(start, end):
@@ -136,12 +138,16 @@ class Board():
             if (self.temp_board[start[1]][start[0]].name == "P") & ((end[1] == 7) | (end[1] == 0)):
                 self.temp_board[end[1]][end[0]] = Piece.Queen(self.temp_board[start[1]][start[0]].colour, True)
                         
-
-        en_passent_logic(start, end)
-        self.temp_board[start[1]][start[0]].has_moved = True
-        self.temp_board[end[1]][end[0]] = self.temp_board[start[1]][start[0]]
-        check_pawn_promotion(start, end)
-        self.temp_board[start[1]][start[0]] = None
+        if self.temp_board[start[1]][start[0]].name == "K":
+            #Weird logic if trying to castle.
+            print("Doing the same logic as the stuff above.")
+        else:
+            #Standard procedure otherwise.
+            en_passent_logic(start, end)
+            self.temp_board[start[1]][start[0]].has_moved = True
+            self.temp_board[end[1]][end[0]] = self.temp_board[start[1]][start[0]]
+            check_pawn_promotion(start, end)
+            self.temp_board[start[1]][start[0]] = None
 
     def check_in_check(self):
         #Will be used on temp check. Will find if they have put themselves in check after a move.
@@ -171,8 +177,4 @@ class Board():
         #See if a move has put themselves in check. E.g. moving a pinned piece (or the weird lateral discovery after en passent)
         self.temp_board = copy.deepcopy(self.board)
         self.temp_move(start, end)
-        if self.check_in_check() == True:
-            print("Moved pinned piece.")
-            return True
-        else:
-            return False
+        return self.check_in_check()
