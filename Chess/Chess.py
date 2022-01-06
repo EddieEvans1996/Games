@@ -8,8 +8,8 @@ class Chess():
         self.board = Board.Board()
 
 
-def translate(coord):
 
+def translate(coord):
     try:
         file = coord[0]
         rank = coord[1]
@@ -22,7 +22,7 @@ def translate(coord):
             return (dict[file], 8 - rank)
     except:
         return None
-        
+
 def main():
     chess = Chess()
     start = ""
@@ -67,6 +67,9 @@ def main():
                 play_again = input("Play again? (Y/N) ")
                 if play_again == "Y":
                     chess = Chess()
+                    start = ""
+                    end = ""
+                    chess.board.print_board()
                     break
                 elif play_again == "N":
                     quit()

@@ -254,6 +254,3 @@ class Board():
             i += 1
 
         return True
-
-        
-        
