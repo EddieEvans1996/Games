@@ -53,8 +53,25 @@ def main():
                 chess.board.white_to_move = not chess.board.white_to_move
         else:
             continue
-
+        
         chess.board.print_board()
 
+        if chess.board.check_for_mate():
+            if chess.board.white_to_move():
+                message = "Checkmate. Black wins."
+            else:
+                message = "Checkmate. White wins."
+
+            print(message)
+            while (True):
+                play_again = input("Play again? (Y/N) ")
+                if play_again == "Y":
+                    chess = Chess()
+                    break
+                elif play_again == "N":
+                    quit()
+                else:
+                    continue
+                
 if __name__ == "__main__":
     main()

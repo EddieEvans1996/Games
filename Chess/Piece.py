@@ -166,7 +166,20 @@ class King(Piece):
             return True
         else:
             return False
-        
+
+    def is_in_check(self, board):
+        def find_myself(board): #Woke
+            i = 0
+            while (i < 8):
+                j = 0
+                while (j < 8):
+                    if board[j][i] != None:
+                        if (board[j][i].name == "K") & (board[j][i].is_white() == self.is_white()):
+                            return (i,j)
+                    j += 1
+                i += 1
+        kingpos = find_myself(board)
+        return square_can_be_attacked_by_colour(board, not self.is_white(), kingpos)
 
 class Queen(Piece):
     def __init__(self, colour, has_moved = False):
