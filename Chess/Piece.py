@@ -218,7 +218,6 @@ class Knight(Piece):
         return valid_knight_move(board, start, end)
 
 class Pawn(Piece):
-    #TODO: #3 Implement promotion.
     def __init__(self, colour, has_moved = False):
         self.value = 1
         super().__init__(colour)

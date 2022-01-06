@@ -22,7 +22,7 @@ def translate(coord):
             return (dict[file], 8 - rank)
     except:
         return None
-
+#TODO Add checking for checkmate and finishing the game.
 def main():
     chess = Chess()
     start = ""
