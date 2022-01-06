@@ -22,7 +22,7 @@ def translate(coord):
             return (dict[file], 8 - rank)
     except:
         return None
-#TODO Add checking for checkmate and finishing the game.
+        
 def main():
     chess = Chess()
     start = ""
@@ -57,7 +57,7 @@ def main():
         chess.board.print_board()
 
         if chess.board.check_for_mate():
-            if chess.board.white_to_move():
+            if chess.board.white_to_move:
                 message = "Checkmate. Black wins."
             else:
                 message = "Checkmate. White wins."
@@ -72,6 +72,6 @@ def main():
                     quit()
                 else:
                     continue
-                
+
 if __name__ == "__main__":
     main()
