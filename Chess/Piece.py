@@ -3,6 +3,44 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 import numpy as np
 
+def square_can_be_attacked_by_colour(board, colour, square):
+    #Colour should be handed to the function in boolean form.
+    i = 0
+    while (i<8):
+        j = 0
+        while (j<8):
+            try:
+                if board[j][i].is_white() == colour:
+                    match board[j][i].name:
+                        case "K":
+                            if (abs(i - square[0]) < 2) & (abs(j - square[1]) < 2):
+                                return True
+                        case "Q":
+                            if (valid_diagonal_move(board, (i,j), square) == True) | (valid_horver_move(board, (i,j), square) == True):
+                                return True
+                        case "R":
+                            if (valid_horver_move(board, (i,j), square) == True):
+                                return True
+                        case "B":
+                            if (valid_diagonal_move(board, (i,j), square) == True):
+                                return True
+                        case "N":
+                            if (valid_knight_move(board, (i,j), square) == True):
+                                return True
+                        case "P":
+                            if colour:
+                                plus = -1
+                            else:
+                                plus = 1
+                            if (abs(i - square[0]) == 1) & (j + plus == square[1]):
+                                return True
+                j += 1
+            except:
+                j += 1
+                continue
+    return False      
+
+
 def valid_diagonal_move(board, start, end):
     #Firstly see if it goes in the diagonal direction
     if abs(start[0] - end[0]) == abs(start[1] - end[1]):
@@ -80,9 +118,6 @@ class King(Piece):
         self.name = "K"
         self.has_moved = has_moved
 
-    #TODO: #2 Implement castling.
-    ##Note that moving through check is just the same as checking if the king is in check if you move one square, or checking if the
-    ##king is in check if you actually do the castrel. Makes the coding easier since it just breaks it down into these two cases.
     def can_castle(self, board, start, end):
         if self.has_moved == False:
             match end[0]:
@@ -91,15 +126,19 @@ class King(Piece):
                         if (board[start[1]][0].has_moved == False) & (board[start[1]][1] == None) & (board[start[1]][2] == None) & (board[start[1]][3] == None):
                             #Find out if the king is moving through check. No need to check the final square since this is 
                             #dealt with by the temp_board
-                            print("Hello")
-                            return True
+                            if (square_can_be_attacked_by_colour(board, not self.is_white(), (4, start[1])) == False) & (square_can_be_attacked_by_colour(board, not self.is_white(), (3, start[1])) == False) & (square_can_be_attacked_by_colour(board, not self.is_white(), (2, start[1])) == False) & (square_can_be_attacked_by_colour(board, not self.is_white(), (4, start[1])) == False):
+                                return True
+                            else:
+                                return False
                     except:
                         return False
                 case 6:
                     try:
                         if (board[start[1]][7].has_moved == False) & (board[start[1]][6] == None) & (board[start[1]][5] == None):
-                            print("Hello")
-                            return True
+                            if (square_can_be_attacked_by_colour(board, not self.is_white(), (5, start[1])) == False) & (square_can_be_attacked_by_colour(board, not self.is_white(), (6, start[1])) == False) & (square_can_be_attacked_by_colour(board, not self.is_white(), (4, start[1])) == False):
+                                return True
+                            else:
+                                return False
                     except:
                         return False
 
@@ -107,6 +146,10 @@ class King(Piece):
     def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
             return False #Preventing moving to own square
+
+        #Check if trying to castle first. Special case!
+        if (self.has_moved == False) & (end[1] == start[1]) & (abs(start[0] - end[0]) == 2):
+            return self.can_castle(board, start, end)
 
         #Check it is moving in the squares around the king, and only taking enemy pieces, and not being allowed on white pieces
         if (start[0] + 1 >= end[0]) & (start[0] - 1 <= end[0]) & (start[1] + 1 >= end[1]) & (start[1] - 1 <= end[1]):

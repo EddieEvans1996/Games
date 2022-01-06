@@ -113,11 +113,25 @@ class Board():
                         case "N":
                             self.board[end[1]][end[0]] = Piece.Knight(self.board[start[1]][start[0]].colour, True)
                             promoted = True
+        castling = False
+        if self.board[start[1]][start[0]].name == "K":
+            if (end[1] == start[1]) & (abs(start[0] - end[0]) == 2):
+                castling = True
+                match end[0]:
+                    case 2:
+                        self.board[start[1]][start[0]].has_moved = True
+                        self.board[end[1]][end[0]] = self.board[start[1]][start[0]]
+                        self.board[start[1]][start[0]] = None
+                        self.board[start[1]][end[0] + 1] = self.board[start[1]][0]
+                        self.board[start[1]][0] = None
+                    case 6:
+                        self.board[start[1]][start[0]].has_moved = True
+                        self.board[end[1]][end[0]] = self.board[start[1]][start[0]]
+                        self.board[start[1]][start[0]] = None
+                        self.board[start[1]][end[0] - 1] = self.board[start[1]][7]
+                        self.board[start[1]][7] = None
 
-        if self.board[start[1]][end[0]].name == "K":
-            print("Hello.")
-            #Enter the logic required here if it turns out the player is castling. Moving lots of stuff at once here.
-        else:
+        if (not castling):
             en_passent_logic(start, end)
             self.board[start[1]][start[0]].has_moved = True
             self.board[end[1]][end[0]] = self.board[start[1]][start[0]]
@@ -138,10 +152,24 @@ class Board():
             if (self.temp_board[start[1]][start[0]].name == "P") & ((end[1] == 7) | (end[1] == 0)):
                 self.temp_board[end[1]][end[0]] = Piece.Queen(self.temp_board[start[1]][start[0]].colour, True)
                         
+        castling = False
         if self.temp_board[start[1]][start[0]].name == "K":
-            #Weird logic if trying to castle.
-            print("Doing the same logic as the stuff above.")
-        else:
+            if (end[1] == start[1]) & (abs(start[0] - end[0]) == 2):
+                castling = True
+                match end[0]:
+                    case 2:
+                        self.temp_board[start[1]][start[0]].has_moved = True
+                        self.temp_board[end[1]][end[0]] = self.temp_board[start[1]][start[0]]
+                        self.temp_board[start[1]][start[0]] = None
+                        self.temp_board[start[1]][end[0] + 1] = self.temp_board[start[1]][0]
+                        self.temp_board[start[1]][0] = None
+                    case 6:
+                        self.temp_board[start[1]][start[0]].has_moved = True
+                        self.temp_board[end[1]][end[0]] = self.temp_board[start[1]][start[0]]
+                        self.temp_board[start[1]][start[0]] = None
+                        self.temp_board[start[1]][end[0] - 1] = self.temp_board[start[1]][7]
+                        self.temp_board[start[1]][7] = None
+        if (not castling):
             #Standard procedure otherwise.
             en_passent_logic(start, end)
             self.temp_board[start[1]][start[0]].has_moved = True
@@ -166,11 +194,7 @@ class Board():
             for j in range(0,8):
                 if self.temp_board[j][i] != None:
                     if self.temp_board[j][i].is_white() != self.white_to_move:
-                        if self.temp_valid_move((i,j), king_pos) == True:
-                            print(i)
-                            print(j)
-                            print(king_pos)
-                            return True
+                        return self.temp_valid_move((i,j), king_pos)
         return False
 
     def check_self_discovery(self, start, end):
