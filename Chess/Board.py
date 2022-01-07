@@ -215,39 +215,37 @@ class Board():
         self.temp_move(start, end)
         return self.check_in_check()
 
+    def find_king(self, board): #Woke
+        i = 0
+        while (i < 8):
+            j = 0
+            while (j < 8):
+                if board[j][i] != None:
+                    if (board[j][i].name == "K") & (board[j][i].is_white() == self.white_to_move):
+                        return (i,j)
+                j += 1
+            i += 1
+        
+    def attempt_all_moves(self, start): #Returns false if moving the selected piece causes the king to no longer be in check
+        self.temp_board = copy.deepcopy(self.board)
+        i=0
+        while (i<8):
+            j=0
+            while (j<8):
+                if self.temp_valid_move(start, (i,j)) == True:
+                    self.temp_move(start, (i,j))
+                    kingpos = self.find_king(self.temp_board)
+                    if (not self.temp_board[kingpos[1]][kingpos[0]].is_in_check(self.temp_board)):
+                        return False
+                    self.temp_board = copy.deepcopy(self.board)
+            i += 1
+        return True
+
     def check_for_mate(self):
         #The self.colour is the colour of the team that might be in checkmate.
 
         #Firstly check that they are in check.
-        def find_king(board): #Woke
-            i = 0
-            while (i < 8):
-                j = 0
-                while (j < 8):
-                    if board[j][i] != None:
-                        if (board[j][i].name == "K") & (board[j][i].is_white() == self.white_to_move):
-                            return (i,j)
-                    j += 1
-                i += 1
-        
-        def attempt_all_moves(start): #Returns false if moving the selected piece causes the king to no longer be in check
-            self.temp_board = copy.deepcopy(self.board)
-            i=0
-            while (i<8):
-                j=0
-                while (j<8):
-                    if self.temp_valid_move(start, (i,j)) == True:
-                        self.temp_move(start, (i,j))
-                        kingpos = find_king(self.temp_board)
-                        if (not self.temp_board[kingpos[1]][kingpos[0]].is_in_check(self.temp_board)):
-                            return False
-                        self.temp_board = copy.deepcopy(self.board)
-                i += 1
-            return True
-            
-
-
-        kingpos = find_king(self.board)
+        kingpos = self.find_king(self.board)
         if (not self.board[kingpos[1]][kingpos[0]].is_in_check(self.board)):
             return False
         #If the king is not in check, mate is false. If the king IS in check, we continuewith the logic below.
@@ -258,7 +256,28 @@ class Board():
             while (j < 8):
                 try:
                     if self.board[j][i].is_white() == self.white_to_move():
-                        if (not attempt_all_moves((i,j))):
+                        if (not self.attempt_all_moves((i,j))):
+                            return False
+                        j += 1
+                except:
+                    j += 1
+            i += 1
+
+        return True
+
+    def check_for_stalemate(self):
+        #This is actually the same as checkmate, but for the fact that the player is not currently in check.
+        kingpos = self.find_king(self.board)
+        if (self.board[kingpos[1]][kingpos[0]].is_in_check(self.board)):
+            return False
+
+        i = 0
+        while (i < 8):
+            j = 0
+            while (j < 8):
+                try:
+                    if self.board[j][i].is_white() == self.white_to_move():
+                        if (not self.attempt_all_moves((i,j))):
                             return False
                         j += 1
                 except:

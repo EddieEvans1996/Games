@@ -79,7 +79,7 @@ def main():
                 else:
                     continue
 
-        if (gamelog.check_50_move_rule() | gamelog.check_for_repetition()):
+        if (gamelog.check_50_move_rule() | gamelog.check_for_repetition() | chess.board.check_for_stalemate()):
             print("A draw.")
             while (True):
                 play_again = input("Play again? (Y/N) ")
