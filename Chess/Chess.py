@@ -2,6 +2,7 @@
 #Responsible for game logic.
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 import Board
+import GameLog
 
 class Chess():
     def __init__(self):
@@ -25,6 +26,8 @@ def translate(coord):
 
 def main():
     chess = Chess()
+    gamelog = GameLog()
+    gamelog.append_starting_position(chess.board.board)
     start = ""
     end = ""
     chess.board.print_board()
@@ -51,6 +54,7 @@ def main():
             if (chess.board.check_self_discovery(start, end) == False):
                 chess.board.move(start, end)
                 chess.board.white_to_move = not chess.board.white_to_move
+                gamelog.update_gamelog(chess.board.board, chess.board.reset_halfmove_clock)
         else:
             continue
         
@@ -63,6 +67,21 @@ def main():
                 message = "Checkmate. White wins."
 
             print(message)
+            while (True):
+                play_again = input("Play again? (Y/N) ")
+                if play_again == "Y":
+                    chess = Chess()
+                    start = ""
+                    end = ""
+                    chess.board.print_board()
+                    break
+                elif play_again == "N":
+                    quit()
+                else:
+                    continue
+
+        if (gamelog.check_50_move_rule() | gamelog.check_for_repetition()):
+            print("A draw.")
             while (True):
                 play_again = input("Play again? (Y/N) ")
                 if play_again == "Y":

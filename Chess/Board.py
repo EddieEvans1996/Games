@@ -7,6 +7,8 @@ import copy
 
 class Board():
     def __init__(self):
+        self.piece_captured = False
+        self.pawn_moved = False
         self.white_to_move = True
         self.board = [[None for i in range(0,8)] for j in range(0,8)]
         self.ghost_board = [[None for i in range(0,8)] for j in range(0,8)]
@@ -113,6 +115,16 @@ class Board():
                         case "N":
                             self.board[end[1]][end[0]] = Piece.Knight(self.board[start[1]][start[0]].colour, True)
                             promoted = True
+        if self.board[start[1]][start[0]].name == "P":
+            self.pawn_moved = True
+        else:
+            self.pawn_moved = False
+
+        if self.board[end[1]][end[0]] != None:
+            self.piece_captured = True
+        else:
+            self.piece_captured = False
+
         castling = False
         if self.board[start[1]][start[0]].name == "K":
             if (end[1] == start[1]) & (abs(start[0] - end[0]) == 2):
@@ -254,3 +266,6 @@ class Board():
             i += 1
 
         return True
+
+    def reset_halfmove_clock(self):
+        return (self.piece_captured | self.pawn_moved)
