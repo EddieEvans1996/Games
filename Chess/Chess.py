@@ -8,8 +8,6 @@ class Chess():
     def __init__(self):
         self.board = Board.Board()
 
-
-
 def translate(coord):
     try:
         file = coord[0]
@@ -26,7 +24,7 @@ def translate(coord):
 
 def main():
     chess = Chess()
-    gamelog = GameLog()
+    gamelog = GameLog.GameLog()
     gamelog.append_starting_position(chess.board.board)
     start = ""
     end = ""
@@ -71,6 +69,7 @@ def main():
                 play_again = input("Play again? (Y/N) ")
                 if play_again == "Y":
                     chess = Chess()
+                    gamelog = GameLog.GameLog()
                     start = ""
                     end = ""
                     chess.board.print_board()
@@ -86,6 +85,7 @@ def main():
                 play_again = input("Play again? (Y/N) ")
                 if play_again == "Y":
                     chess = Chess()
+                    gamelog = GameLog.GameLog()
                     start = ""
                     end = ""
                     chess.board.print_board()
