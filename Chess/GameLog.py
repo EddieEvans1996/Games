@@ -13,11 +13,10 @@ class GameLog():
     def check_for_repetition(self):
         #Make the move on the game first, then this will check if the position currently on the board has been reached
         #for the third time.
-
         length = len(self.history)
-        current_position = self.history[length - 1]
-
+        
         if length > 6:
+            current_position = self.history[length - 1]
             counter = 0
             for j in self.history:
                 if j == current_position:
@@ -54,6 +53,8 @@ class GameLog():
                     if counter != 0:
                         FEN_string += str(counter)
                         counter = 0
+                        FEN_string += square_piece
+                    else:
                         FEN_string += square_piece
             FEN_string += "/"
         return FEN_string[0:len(FEN_string) - 1]

@@ -72,12 +72,12 @@ class Board():
             return board[start[1]][start[0]].is_valid_move(board, self.ghost_board, start, end) 
             #Currently just finds if it is a valid move, and then performs the move. It should perform the move on the temp board, check
             #if they have not discovered themselves, and then only then can they determine if the move is valid or not.
-    def temp_valid_move(self, start, end):
+    def temp_valid_move(self, moving_colour, start, end):
         #Ensures that a piece has been chosen.
         #Ensures that a null move (i.e. moving a piece to where it currently is) is not allowed.
         if self.temp_board[start[1]][start[0]] == None or start == end:
             return False
-        elif self.white_to_move == self.temp_board[start[1]][start[0]].is_white():
+        elif moving_colour != self.temp_board[start[1]][start[0]].is_white():
             return False
         else:
             return self.temp_board[start[1]][start[0]].is_valid_move(self.temp_board, self.ghost_board, start, end)
@@ -189,31 +189,32 @@ class Board():
             check_pawn_promotion(start, end)
             self.temp_board[start[1]][start[0]] = None
 
-    def check_in_check(self):
-        #Will be used on temp check. Will find if they have put themselves in check after a move.
-        def find_king():
-            i = 0
-            while (i < 8):
-                j = 0
-                while (j < 8):
-                    if self.temp_board[j][i] != None:
-                        if (self.temp_board[j][i].name == "K") & (self.temp_board[j][i].is_white() == self.white_to_move):
-                            return (i,j)
-                    j += 1
-                i += 1
-        king_pos = find_king()
-        for i in range(0,8):
-            for j in range(0,8):
-                if self.temp_board[j][i] != None:
-                    if self.temp_board[j][i].is_white() != self.white_to_move:
-                        return self.temp_valid_move((i,j), king_pos)
-        return False
+    # def check_in_check(self):
+    #     #Will be used on temp check. Will find if they have put themselves in check after a move.
+    #     def find_king():
+    #         i = 0
+    #         while (i < 8):
+    #             j = 0
+    #             while (j < 8):
+    #                 if self.temp_board[j][i] != None:
+    #                     if (self.temp_board[j][i].name == "K") & (self.temp_board[j][i].is_white() == self.white_to_move):
+    #                         return (i,j)
+    #                 j += 1
+    #             i += 1
+    #     king_pos = find_king()
+    #     for i in range(0,8):
+    #         for j in range(0,8):
+    #             if self.temp_board[j][i] != None:
+    #                 if self.temp_board[j][i].is_white() != self.white_to_move:
+    #                     return self.temp_valid_move(not self.white_to_move, (i,j), king_pos)
+    #     return False
 
     def check_self_discovery(self, start, end):
         #See if a move has put themselves in check. E.g. moving a pinned piece (or the weird lateral discovery after en passent)
         self.temp_board = copy.deepcopy(self.board)
         self.temp_move(start, end)
-        return self.check_in_check()
+        kingpos = self.find_king(self.temp_board)
+        return self.temp_board[kingpos[1]][kingpos[0]].is_in_check(self.temp_board)
 
     def find_king(self, board): #Woke
         i = 0
@@ -232,12 +233,13 @@ class Board():
         while (i<8):
             j=0
             while (j<8):
-                if self.temp_valid_move(start, (i,j)) == True:
+                if self.temp_valid_move(self.white_to_move, start, (i,j)) == True:
                     self.temp_move(start, (i,j))
                     kingpos = self.find_king(self.temp_board)
                     if (not self.temp_board[kingpos[1]][kingpos[0]].is_in_check(self.temp_board)):
                         return False
                     self.temp_board = copy.deepcopy(self.board)
+                j += 1
             i += 1
         return True
 
@@ -255,10 +257,10 @@ class Board():
             j = 0
             while (j < 8):
                 try:
-                    if self.board[j][i].is_white() == self.white_to_move():
+                    if (self.board[j][i].is_white() == self.white_to_move):
                         if (not self.attempt_all_moves((i,j))):
                             return False
-                        j += 1
+                    j += 1
                 except:
                     j += 1
             i += 1
@@ -276,10 +278,10 @@ class Board():
             j = 0
             while (j < 8):
                 try:
-                    if self.board[j][i].is_white() == self.white_to_move():
+                    if (self.board[j][i].is_white() == self.white_to_move):
                         if (not self.attempt_all_moves((i,j))):
                             return False
-                        j += 1
+                    j += 1
                 except:
                     j += 1
             i += 1
