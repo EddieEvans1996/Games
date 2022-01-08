@@ -61,11 +61,9 @@ class GameLog():
         
     def append_starting_position(self, starting_position):
         self.history.append(self.translate_to_FEN(starting_position))
-        print(self.translate_to_FEN(starting_position))
 
     def update_gamelog(self, board, reset_halfmove):
         self.history.append(self.translate_to_FEN(board))
-        print(self.translate_to_FEN(board))
         if reset_halfmove:
             self.halfmove_clock = 0
         else:

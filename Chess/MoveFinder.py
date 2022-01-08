@@ -18,5 +18,5 @@ def move_finder(board):
                             if (board.valid_move(board.board, (i,j), (k,l)) == True):
                                 if (board.check_self_discovery((i,j), (k,l)) == False):
                                     move_list.append([(i,j), (k,l)])
-    print(move_list)
+                                    
     return move_list
