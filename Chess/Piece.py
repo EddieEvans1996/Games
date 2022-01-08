@@ -245,20 +245,23 @@ class Pawn(Piece):
         else:
             plus = 1
         #Can the pawn move forward one square.
-        if (end[0] == start[0]) & (end[1] == start[1] + plus) & (board[end[1]][end[0]] == None):
-            return True
-        #Can the pawn move forward two squares.
-        elif (end[0] == start[0]) & (end[1] == start[1] + 2*plus) & (board[end[1]][end[0]] == None) & (board[end[1] - plus][end[0]] == None) & (self.has_moved == False):
-            return True
-        elif (abs(end[0] - start[0]) == 1) & (end[1] == start[1] + plus) & (board[end[1]][end[0]] != None):
-            if board[end[1]][end[0]].is_white() != self.is_white():
+        try:
+            if (end[0] == start[0]) & (end[1] == start[1] + plus) & (board[end[1]][end[0]] == None):
+                return True
+            #Can the pawn move forward two squares.
+            elif (end[0] == start[0]) & (end[1] == start[1] + 2*plus) & (board[end[1]][end[0]] == None) & (board[end[1] - plus][end[0]] == None) & (self.has_moved == False):
+                return True
+            elif (abs(end[0] - start[0]) == 1) & (end[1] == start[1] + plus) & (board[end[1]][end[0]] != None):
+                if board[end[1]][end[0]].is_white() != self.is_white():
+                    return True
+                else:
+                    return False
+            #The en passent clause
+            elif (abs(end[0] - start[0]) == 1) & (end[1] == start[1] + plus) & (board[end[1]][end[0]] == None) & (ghost_board[end[1]][end[0]] != None):
                 return True
             else:
                 return False
-        #The en passent clause
-        elif (abs(end[0] - start[0]) == 1) & (end[1] == start[1] + plus) & (board[end[1]][end[0]] == None) & (ghost_board[end[1]][end[0]] != None):
-            return True
-        else:
+        except:
             return False
 
 class GhostPawn(Piece):

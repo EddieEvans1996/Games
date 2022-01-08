@@ -3,6 +3,7 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 import Board
 import GameLog
+import MoveFinder
 
 class Chess():
     def __init__(self):
