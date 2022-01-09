@@ -3,7 +3,6 @@
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 import numpy as np
 import pygame
-import Gui
 
 
 def square_can_be_attacked_by_colour(board, colour, square):
@@ -128,10 +127,10 @@ class King(Piece):
         self.value = 999
         self.name = "K"
         self.has_moved = has_moved
-        if self.colour.iswhite() == True:
-            self.image = pygame.image.load("Piece_Images/WK.png")
+        if self.is_white() == True:
+            self.image = "Piece_Images/WK.png"
         else:
-            self.image = pygame.image.load("Piece_Images/BK.png")
+            self.image = "Piece_Images/BK.png"
 
     def can_castle(self, board, start, end):
         if self.has_moved == False:
@@ -203,6 +202,10 @@ class Queen(Piece):
         super().__init__(colour)
         self.value = 9
         self.name = "Q"
+        if self.is_white() == True:
+            self.image = "Piece_Images/WQ.png"
+        else:
+            self.image = "Piece_Images/BQ.png"
 
     def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
@@ -217,6 +220,10 @@ class Rook(Piece):
         super().__init__(colour)
         self.name = "R"
         self.has_moved = has_moved
+        if self.is_white() == True:
+            self.image = "Piece_Images/WR.png"
+        else:
+            self.image = "Piece_Images/BR.png"
 
     def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
@@ -230,6 +237,10 @@ class Bishop(Piece):
         self.value = 3
         super().__init__(colour)
         self.name = "B"
+        if self.is_white() == True:
+            self.image = "Piece_Images/WB.png"
+        else:
+            self.image = "Piece_Images/BB.png"
 
     def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
@@ -243,6 +254,10 @@ class Knight(Piece):
         self.value = 3
         super().__init__(colour)
         self.name = "N"
+        if self.is_white() == True:
+            self.image = "Piece_Images/WN.png"
+        else:
+            self.image = "Piece_Images/BN.png"
 
     def is_valid_move(self, board, ghost_board, start, end):
         if start == end:
@@ -257,6 +272,10 @@ class Pawn(Piece):
         super().__init__(colour)
         self.name = "P"
         self.has_moved = has_moved
+        if self.is_white() == True:
+            self.image = "Piece_Images/WP.png"
+        else:
+            self.image = "Piece_Images/BP.png"
 
     def is_valid_move(self, board, ghost_board, start, end):
         if start == end:

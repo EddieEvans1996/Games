@@ -1,12 +1,12 @@
+# %%
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Responsible for GUI and entertaining the user!
 # To start, this will simply be a command line.
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+import pygame
 import Piece
 import copy
 from typing import Sized
-import pygame
-import Piece
 
 
 class Board():
@@ -44,18 +44,20 @@ class Board():
 
     def print_board(self):
         string = ""
+
         for i in range(0, 21):
             string += "*"
         print(string)
         print(string)
         for i in range(0, 8):
             string = "**|"
-            for j in self.board[i]:
-                if j == None:
+            for j in range(0, 8):
+                if self.board[i][j] == None:
                     string += " |"
+                    continue
                 else:
-                    string = string + str(j) + "|"
-
+                    string = string + str(self.board[i][j]) + "|"
+                    piece_loader(j*100, i*100, self.board[i][j].image)
             string += "**"
             print(string)
         string = ""
@@ -316,8 +318,8 @@ class Board():
         return (self.piece_captured | self.pawn_moved)
 
 
-# %%
 # set up window
+
 screen = pygame.display.set_mode([800, 800])
 background_colour = (44, 44, 84)
 
@@ -334,8 +336,10 @@ class Square():
             self.x_pos, self.y_pos, self.size, self.size))
 
 
-def piece(xpos, ypos, image):
-    screen.blit(image, (xpos, ypos))
+def piece_loader(xpos, ypos, image):
+    chess_image = pygame.image.load(image)
+    screen.blit(chess_image, (xpos, ypos))
+    pygame.display.update()
 
 
 rectangles = []
@@ -347,12 +351,8 @@ for i in range(0, 8):
             rectangles.append(Square(i*100, (j+1)*100))
 
 
-chess_board = Bd.Board()
-chess_board.print_board()
-
-
 pygame.init()
-
+clock = pygame.time.Clock()
 
 # run until user quits
 running = True
@@ -368,6 +368,10 @@ while running:
         rectangle.square_drawer()
 
     screen.unlock()
+    chess_board = Board()
+    chess_board.print_board()
+    clock.tick(1)
+
     pygame.display.update()
 pygame.quit()
 
