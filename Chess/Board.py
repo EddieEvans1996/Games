@@ -8,10 +8,33 @@ import Piece
 import copy
 from typing import Sized
 
+screen = pygame.display.set_mode([800, 800])
+background_colour = (44, 44, 84)
+
+
+class Square():
+    def __init__(self, x_pos, y_pos, size=100, colour=background_colour):
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.colour = background_colour
+        self.size = size
+
+    def square_drawer(self):
+        pygame.draw.rect(screen, self.colour, pygame.Rect(
+            self.x_pos, self.y_pos, self.size, self.size))
+
 
 class Board():
     def __init__(self):
+        self.rectangles = []
         self.piece_captured = False
+        for i in range(0, 8):
+            for j in range(0, 8, 2):
+                if i % 2 == 1:
+                    self.rectangles.append(Square(i*100, j*100))
+                if i % 2 == 0:
+                    self.rectangles.append(Square(i*100, (j+1)*100))
+
         self.pawn_moved = False
         self.white_to_move = True
         self.board = [[None for i in range(0, 8)] for j in range(0, 8)]
@@ -42,9 +65,24 @@ class Board():
         for i in range(0, 8):
             self.board[1][i] = Piece.Pawn('b')
 
+    def update_screen(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            # Creating the background.
+        running = True
+        # Quit case
+        screen.fill((225, 218, 189))
+        for rectangle in self.rectangles:
+            rectangle.square_drawer()
+
+    def piece_loader(self, xpos, ypos, image):
+        chess_image = pygame.image.load(image)
+        screen.blit(chess_image, (xpos, ypos))
+
     def print_board(self):
         string = ""
-
+        self.update_screen()
         for i in range(0, 21):
             string += "*"
         print(string)
@@ -57,9 +95,13 @@ class Board():
                     continue
                 else:
                     string = string + str(self.board[i][j]) + "|"
-                    piece_loader(j*100, i*100, self.board[i][j].image)
-            string += "**"
-            print(string)
+
+                    self.piece_loader(j*100, i*100, self.board[i][j].image)
+
+        pygame.display.update()
+
+        string += "**"
+        print(string)
         string = ""
         for i in range(0, 21):
             string += "*"
@@ -317,62 +359,5 @@ class Board():
     def reset_halfmove_clock(self):
         return (self.piece_captured | self.pawn_moved)
 
-
-# set up window
-
-screen = pygame.display.set_mode([800, 800])
-background_colour = (44, 44, 84)
-
-
-class Square():
-    def __init__(self, x_pos, y_pos, size=100, colour=background_colour):
-        self.x_pos = x_pos
-        self.y_pos = y_pos
-        self.colour = background_colour
-        self.size = size
-
-    def square_drawer(self):
-        pygame.draw.rect(screen, self.colour, pygame.Rect(
-            self.x_pos, self.y_pos, self.size, self.size))
-
-
-def piece_loader(xpos, ypos, image):
-    chess_image = pygame.image.load(image)
-    screen.blit(chess_image, (xpos, ypos))
-    pygame.display.update()
-
-
-rectangles = []
-for i in range(0, 8):
-    for j in range(0, 8, 2):
-        if i % 2 == 1:
-            rectangles.append(Square(i*100, j*100))
-        if i % 2 == 0:
-            rectangles.append(Square(i*100, (j+1)*100))
-
-
-pygame.init()
-clock = pygame.time.Clock()
-
-# run until user quits
-running = True
-while running:
-    # Quit case
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    # Creating the background.
-    screen.fill((225, 218, 189))
-    screen.lock()
-    for rectangle in rectangles:
-        rectangle.square_drawer()
-
-    screen.unlock()
-    chess_board = Board()
-    chess_board.print_board()
-    clock.tick(1)
-
-    pygame.display.update()
-pygame.quit()
 
 # %%

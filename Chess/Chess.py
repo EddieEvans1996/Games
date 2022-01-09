@@ -7,6 +7,7 @@
 import Board
 import GameLog
 import MoveGenerator
+import pygame
 
 
 class Chess():
@@ -207,9 +208,14 @@ def PvC(player_colour):
                     quit()
                 else:
                     continue
+# set up window
 
 
 def main():
+
+    pygame.init()
+    clock = pygame.time.Clock()
+
     while (True):
         game_type = input(
             "Press 1 for PvP, press 2 to play against AI as white, and press 3 to play against AI as black. ")
@@ -223,6 +229,7 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()
 
 # %%
