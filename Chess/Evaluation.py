@@ -29,7 +29,7 @@ class Evaluator():
 
     def simple_evaluator(self, board):
         #Takes into account: material, piece square tables
-        table_multiplyer = 0.5
+        table_multiplyer = 0.2
         material_score = self.material_eval(board)
         psqtbl_score = self.get_psqr_table_eval(board)
         return material_score + table_multiplyer*psqtbl_score
