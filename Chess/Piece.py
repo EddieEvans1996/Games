@@ -2,6 +2,8 @@
 # Responsible for pieces.
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 import numpy as np
+import pygame
+import Gui
 
 
 def square_can_be_attacked_by_colour(board, colour, square):
@@ -126,6 +128,10 @@ class King(Piece):
         self.value = 999
         self.name = "K"
         self.has_moved = has_moved
+        if self.colour.iswhite() == True:
+            self.image = pygame.image.load("Piece_Images/WK.png")
+        else:
+            self.image = pygame.image.load("Piece_Images/BK.png")
 
     def can_castle(self, board, start, end):
         if self.has_moved == False:
