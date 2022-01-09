@@ -40,11 +40,6 @@ class Board():
             self.board[1][i] = Piece.Pawn('b')
 
     def print_board(self):
-        string = ""
-        for i in range(0, 21):
-            string += "*"
-        print(string)
-        print(string)
         for i in range(0, 8):
             string = "**|"
             for j in self.board[i]:

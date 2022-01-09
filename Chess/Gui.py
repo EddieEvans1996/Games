@@ -30,6 +30,10 @@ for i in range(0, 8):
             rectangles.append(Square(i*100, (j+1)*100))
 
 
+chess_board = Bd.Board()
+chess_board.print_board()
+
+
 pygame.init()
 
 
@@ -40,13 +44,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+    # Creating the background.
     screen.fill((225, 218, 189))
     screen.lock()
-    # creating Background of interlacing squares.
     for rectangle in rectangles:
         rectangle.square_drawer()
-        print(rectangle.x_pos, rectangle.y_pos)
 
     screen.unlock()
     pygame.display.update()
