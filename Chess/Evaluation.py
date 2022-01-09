@@ -10,6 +10,7 @@ class Evaluator():
         self.evaluator = evaluator_choice
         self.list_of_evaluators = ["simple"]
         self.fen_translator = GameLog.GameLog()
+
     def evaluate_board(self, board):
         match self.evaluator:
             case "simple":
@@ -24,7 +25,7 @@ class Evaluator():
 
     def get_psqr_table_eval(self, board):
         fen = self.fen_translator.translate_to_FEN(board)
-        PieceSquareTables.get_tablesquare_value(board, fen)
+        return PieceSquareTables.get_tablesquare_value(board, fen)
 
     def simple_evaluator(self, board):
         #Takes into account: material, piece square tables
